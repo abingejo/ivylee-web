@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Only this site and Google's sign-in and Drive endpoints - nothing
+       else can be reached from this page (see web/README.md). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://accounts.google.com/gsi/client; style-src 'self' https://accounts.google.com/gsi/style; connect-src https://www.googleapis.com https://accounts.google.com/gsi/; frame-src https://accounts.google.com/gsi/; img-src 'self' data:; font-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#121214">
+  <title>Ivy Lee Planner · Inbox</title>
+  <link rel="icon" href="icon.png">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="bar">
+    <div class="brand"><img src="icon.png" alt="">Ivy Lee Planner</div>
+    <div class="who">
+      <span id="synced" class="muted"></span>
+      <button id="signout" class="link" hidden>Sign out</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="welcome" class="card center">
+      <h1>Add from anywhere</h1>
+      <p class="muted">Tasks and notes added here go to your phone's Ivy Lee Planner the next time it's opened. Sign in with the Google account the app backs up to.</p>
+      <button id="signin" class="primary">Sign in with Google</button>
+      <p id="signinError" class="error" hidden></p>
+    </section>
+
+    <section id="app" hidden>
+      <div class="tabs" role="tablist">
+        <button class="tab on" data-tab="task" role="tab">Task</button>
+        <button class="tab" data-tab="note" role="tab">Note</button>
+      </div>
+
+      <form id="taskForm" class="card" autocomplete="off">
+        <input id="taskName" class="big" placeholder="What needs doing?" maxlength="500" required>
+        <label class="row">Category
+          <select id="taskCategory"></select>
+        </label>
+        <div class="toggles">
+          <label class="toggle"><input type="checkbox" id="taskUrgent"><span>Urgent</span></label>
+          <label class="toggle"><input type="checkbox" id="taskImportant"><span>Important</span></label>
+          <label class="toggle gold"><input type="checkbox" id="taskBigPush"><span>Big push</span></label>
+        </div>
+        <p id="matrixBox" class="muted small"></p>
+
+        <div class="field">
+          <span class="label">Day</span>
+          <div class="chips" id="dayChips">
+            <button type="button" data-day="today" class="chip on">Today</button>
+            <button type="button" data-day="tomorrow" class="chip">Tomorrow</button>
+            <button type="button" data-day="custom" class="chip">Pick a date</button>
+            <button type="button" data-day="none" class="chip">No date</button>
+          </div>
+          <input type="date" id="taskDate" hidden>
+        </div>
+        <div class="field" id="timeField">
+          <span class="label">Time <span class="muted">· optional</span></span>
+          <input type="time" id="taskTime">
+        </div>
+        <div class="field">
+          <span class="label">Length</span>
+          <div class="chips" id="lengthChips">
+            <button type="button" data-min="15" class="chip">15m</button>
+            <button type="button" data-min="30" class="chip on">30m</button>
+            <button type="button" data-min="45" class="chip">45m</button>
+            <button type="button" data-min="60" class="chip">1h</button>
+            <button type="button" data-min="90" class="chip">1h 30m</button>
+            <button type="button" data-min="120" class="chip">2h</button>
+            <input type="number" id="taskMinutes" class="minutes" min="1" max="1440" placeholder="min">
+          </div>
+        </div>
+        <div class="field">
+          <span class="label">Subtasks <span class="muted">· one per line, optional</span></span>
+          <textarea id="taskSubtasks" rows="3"></textarea>
+        </div>
+        <p id="taskTicket" class="ticket"></p>
+        <button class="primary" type="submit">Add task</button>
+      </form>
+
+      <form id="noteForm" class="card" autocomplete="off" hidden>
+        <div class="chips">
+          <button type="button" data-kind="text" class="chip on">Text</button>
+          <button type="button" data-kind="list" class="chip">Checklist</button>
+        </div>
+        <input id="noteTitle" class="big serif" placeholder="Heading" maxlength="300">
+        <textarea id="noteBody" rows="8" placeholder="Write it down…"></textarea>
+        <label class="row">Label
+          <select id="noteLabel"></select>
+        </label>
+        <button class="primary" type="submit">Add note</button>
+      </form>
+
+      <p id="status" class="status" role="status"></p>
+
+      <section class="card">
+        <h2>On its way to your phone</h2>
+        <p class="muted small">Taken in the next time the app is opened, then cleared from here.</p>
+        <ul id="pending" class="list"></ul>
+      </section>
+
+      <section class="card">
+        <h2>From your phone <span id="asOf" class="muted small"></span></h2>
+        <div class="chips">
+          <button type="button" data-view="tasks" class="chip on">Open tasks</button>
+          <button type="button" data-view="notes" class="chip">Notes</button>
+        </div>
+        <ul id="phoneList" class="list"></ul>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="confirm">
+    <p id="confirmText"></p>
+    <div class="actions">
+      <button id="confirmNo" class="link">Cancel</button>
+      <button id="confirmYes" class="danger">Remove</button>
+    </div>
+  </dialog>
+</body>
+</html>
